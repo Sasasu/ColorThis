@@ -4,7 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 
-extern bool FAKE_FD[3];
+extern bool FAKE_FD[3]; // in main.c
 static char PRELOAD[2048] = "libLibColorThis.so";
 
 __attribute__((noreturn)) void hook_exec(char *path, char *arg[]) {

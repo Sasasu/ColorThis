@@ -49,5 +49,10 @@ int main(int argc, char *argv[]) {
     return 0;
   }
 
+  pid_t pid = pty_fork_exec(argv[i], argv + i);
+
+  // TODO use epoll
+  sleep(5);
+
   return 0;
 }
