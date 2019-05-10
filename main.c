@@ -17,7 +17,7 @@ void showhelp(char *name) {
   printf("\t-stdout:  make stdout is a tty\n");
   printf("\t-stderr:  make stderr is a tty\n");
   printf("\t-hook:    hook libc's isatty function\n");
-  printf("\t          NOTE: may not work");
+  printf("\t          NOTE: may not work well\n");
   printf("where application like\n");
   printf("\t          ls / </dev/null 2>/dev/null\n");
 }
