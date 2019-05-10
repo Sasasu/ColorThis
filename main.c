@@ -4,6 +4,9 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <sys/types.h>
+#include <sys/wait.h>
+
 #include "epoll.h"
 #include "hook.h"
 #include "pty.h"
@@ -51,8 +54,8 @@ int main(int argc, char *argv[]) {
 
   pid_t pid = pty_fork_exec(argv[i], argv + i);
 
-  // TODO use epoll
-  sleep(5);
+  epoll_init();
+  start_loop();
 
-  return 0;
+  return waitpid(pid, NULL, 0);
 }

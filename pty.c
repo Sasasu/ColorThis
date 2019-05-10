@@ -13,7 +13,7 @@ extern char *ptsname(int);    // ptsname in libc
 
 // 0 => don't use
 // -1 => use this pty
-int ptys[3] = {0, 0, 0};
+int PTYS[3] = {0, 0, 0};
 
 int ptym_open(char *ptyname) {
   int psfd = posix_openpt(O_RDWR);
@@ -95,11 +95,11 @@ int pty_fork_exec(char *path, char *arg[]) {
   pid_t pid;
   for (size_t i = 0; i < 3; i++) {
     if (FAKE_FD[i] == true) {
-      ptys[i] = -1;
+      PTYS[i] = -1;
     }
   }
 
-  if ((pid = pty_fork(ptys)) < 0) {
+  if ((pid = pty_fork(PTYS)) < 0) {
     return -1;
   } else if (pid == 0) {
     execvp(path, arg);
