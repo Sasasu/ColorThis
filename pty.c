@@ -59,6 +59,9 @@ pid_t pty_fork(int ptys[]) {
     if (i == STDIN_FILENO) {
       set_ter(ptys[STDIN_FILENO], ~ICANON & ~ECHO);
     }
+    if(i == STDERR_FILENO){
+        set_ter(ptys[STDERR_FILENO], ~ICANON);
+    }
   }
 
   if ((pid = fork()) < 0) {
