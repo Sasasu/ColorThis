@@ -21,8 +21,9 @@ if read EOF from $IN_FD, close $OUT_FD and remove from poll
 
 extern bool FAKE_FD[3]; // in main.c
 
+int fd_sum = 0;
+
 static int epollfd = 0;
-static int fd_sum = 0;
 static struct epoll_event ev, events[MAX_EVENT];
 
 void set_nonblocking(int fd) {

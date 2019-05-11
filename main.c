@@ -26,6 +26,8 @@ void showhelp(char *name) {
   printf("\t          ls / </dev/null 2>/dev/null\n");
 }
 
+void setup_sig(void);
+
 int main(int argc, char *argv[]) {
   int i;
   bool use_hook = false;
@@ -36,9 +38,10 @@ int main(int argc, char *argv[]) {
   }
 
   for (i = 1; i < argc; i++) {
-    if (!strcmp(argv[i], "-stdin"))
+    if (!strcmp(argv[i], "-stdin")) {
+      set_ter(STDIN_FILENO, ~ICANON & ~ECHO);
       FAKE_FD[STDIN_FILENO] = true;
-    else if (!strcmp(argv[i], "-stdout"))
+    } else if (!strcmp(argv[i], "-stdout"))
       FAKE_FD[STDOUT_FILENO] = true;
     else if (!strcmp(argv[i], "-stderr"))
       FAKE_FD[STDERR_FILENO] = true;
@@ -55,8 +58,31 @@ int main(int argc, char *argv[]) {
 
   pid = pty_fork_exec(argv[i], argv + i);
 
+  setup_sig();
   epoll_init();
   start_loop();
 
   return waitpid(pid, NULL, 0);
+}
+
+void sig_handler(int signo) {
+  switch (signo) {
+  case SIGCHLD:
+    exit(waitpid(pid, NULL, 0));
+  default:
+    kill(pid, signo);
+  }
+}
+
+static struct sigaction sa;
+void setup_sig(void) {
+  sa.sa_flags = SA_RESTART;
+  sa.sa_handler = &sig_handler;
+  sigfillset(&sa.sa_mask);
+  if (sigaction(SIGCHLD, &sa, NULL) == -1 || // sub process exit
+      sigaction(SIGINT, &sa, NULL) == -1     // C-c
+  ) {
+    perror("handle signal");
+    exit(1);
+  }
 }

@@ -56,6 +56,9 @@ pid_t pty_fork(int ptys[]) {
     if (ptys[i] == 0)
       continue;
     ptys[i] = ptym_open(pty_names[i]);
+    if (i == STDIN_FILENO) {
+      set_ter(ptys[STDIN_FILENO], ~ICANON & ~ECHO);
+    }
   }
 
   if ((pid = fork()) < 0) {
@@ -105,4 +108,13 @@ int pty_fork_exec(char *path, char *arg[]) {
     execvp(path, arg);
   }
   return pid;
+}
+
+void set_ter(int fd, tcflag_t flag) {
+  if (!isatty(fd))
+    return;
+  struct termios t;
+  tcgetattr(fd, &t);
+  t.c_lflag &= flag;
+  tcsetattr(fd, TCSANOW, &t);
 }
