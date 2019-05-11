@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -126,6 +127,8 @@ void start_loop() {
   while (fd_sum != 0) {
     int nfds = epoll_wait(epollfd, events, MAX_EVENT, -1);
     if (nfds == -1) {
+      if (errno == EINTR)
+        continue;
       perror("epoll_wait");
       exit(1);
     }

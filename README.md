@@ -54,6 +54,10 @@ if `-hook` is enabled, ColorThis will inject self to `LD_PRELOAD` and patch `isa
 
 but if the application call syscall directly or is fully static link this method will not work.
 
+if `-hook` is not enabled, ColorThis will creat at most 3 ptys, catch all signs, creat a new session, fork and exec the new executable file.
+
+ColorThis act like a terminal, exec the new executable file then attach some new tty to this session, these tty forward anything to the real tty.
+
 ## License
 
 MIT

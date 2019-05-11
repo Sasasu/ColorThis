@@ -12,6 +12,7 @@
 #include "pty.h"
 
 bool FAKE_FD[3] = {false, false, false};
+static pid_t pid;
 
 void showhelp(char *name) {
   printf("Usage: %s <option> [application]\n", name);
@@ -52,7 +53,7 @@ int main(int argc, char *argv[]) {
     return 0;
   }
 
-  pid_t pid = pty_fork_exec(argv[i], argv + i);
+  pid = pty_fork_exec(argv[i], argv + i);
 
   epoll_init();
   start_loop();
